@@ -31,14 +31,18 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Add required Babel dependencies
+      - name: Install required Expo and NativeWind dependencies
         run: |
           pnpm add -D \
             babel-preset-expo@57.0.16 \
             @babel/plugin-transform-react-jsx@7.27.1 \
             --lockfile=false
 
-      - name: Install dependencies
+          pnpm add \
+            react-native-css-interop@0.2.1 \
+            --lockfile=false
+
+      - name: Install project dependencies
         run: pnpm install --no-frozen-lockfile
 
       - name: Check Expo configuration
