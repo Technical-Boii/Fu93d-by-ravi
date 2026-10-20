@@ -8,11 +8,12 @@ permissions:
 
 jobs:
   build-apk:
+    name: Build APK
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -20,7 +21,7 @@ jobs:
           version: 9.12.0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
 
@@ -33,12 +34,26 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Check Expo project
+        run: pnpm exec expo config --type public
+
       - name: Generate Android project
         run: pnpm exec expo prebuild --non-interactive
 
-      - name: Build APK
+      - name: Check generated Android project
+        run: |
+          test -f android/gradlew
+          test -f android/gradle/wrapper/gradle-wrapper.properties
+          chmod +x android/gradlew
+
+      - name: Export Android JavaScript bundle
+        run: |
+          pnpm exec expo export --platform android --clear
+        continue-on-error: true
+
+      - name: Build release APK
         working-directory: android
-        run: ./gradlew assembleRelease --no-daemon
+        run: ./gradlew assembleRelease --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
