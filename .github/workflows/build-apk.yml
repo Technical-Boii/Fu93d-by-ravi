@@ -31,8 +31,12 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Add missing Expo Babel preset
-        run: pnpm add -D babel-preset-expo@57.0.16 --lockfile=false
+      - name: Add required Babel dependencies
+        run: |
+          pnpm add -D \
+            babel-preset-expo@57.0.16 \
+            @babel/plugin-transform-react-jsx@7.27.1 \
+            --lockfile=false
 
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
