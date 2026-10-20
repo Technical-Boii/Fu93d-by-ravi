@@ -31,25 +31,23 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Add missing Expo Babel preset
+        run: pnpm add -D babel-preset-expo@57.0.16 --lockfile=false
 
-      - name: Check Expo project
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Check Expo configuration
         run: pnpm exec expo config --type public
 
       - name: Generate Android project
         run: pnpm exec expo prebuild --non-interactive
 
-      - name: Check generated Android project
+      - name: Check Android project
         run: |
           test -f android/gradlew
           test -f android/gradle/wrapper/gradle-wrapper.properties
           chmod +x android/gradlew
-
-      - name: Export Android JavaScript bundle
-        run: |
-          pnpm exec expo export --platform android --clear
-        continue-on-error: true
 
       - name: Build release APK
         working-directory: android
